@@ -1,0 +1,57 @@
+PROGRAM userLogin
+
+// proses login
+@NotEmpty(message = "email is required")
+@Email(message = "Email is not valid")
+READ AND WRITE "email" with string;
+INPUT email;
+
+@NotEmpty(message = "Password is required")
+READ AND WRITE "password" with string;
+INPUT password;
+
+// authentication
+IF "email" AND "password" EQUAL TRUE
+    RETURN login;
+ELSE
+    PRNIT "email atau password salah";
+
+// pencarian resto
+@PostMapping("/RestoSearch")
+FUNCTION List<Restoran> getRestoByName(@RequestBody SearchDTO searchDTO ){
+    return this.findByRestoByName(searchDTO.getSearchKey());
+} 
+
+// pencarian menu 
+@PostMapping("/MenuSearch")
+FUNCTION List<Menu> getMenuByName(@RequestBody SearchDTO searchDTO ){
+    return this.findByMenuByName(searchDTO.getSearchKey());
+} 
+
+// top-up
+PROCEDURE top-up (GET "saldo_user", total_topup)
+STORE "result" with saldo_user plus total_topup
+return result
+END PROCEDURE
+
+// pembayaran e-wallet
+PROCEDURE e-wallet (GET saldo)
+STORE "price_food" with number 
+
+IF "saldo" more than or equal "price_food"
+    PRINT "driver menujur restoran" /n;
+    PRINT "driver menujur lokasi antar"
+    PRINT "makanan sampai"
+ELSE
+    CALL top-up
+END PROCEDURE
+
+
+// memilih cara pembayaran
+REAN AND WRITE "payment" with boolean;
+IF "paymant" equal TRUE
+    PRINT "driver menujur restoran" /n;
+    PRINT "driver menujur lokasi antar"
+    PRINT "makanan sampai"
+
+ELSE call e-wallet;
